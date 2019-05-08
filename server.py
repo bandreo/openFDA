@@ -80,15 +80,15 @@ class testHTTPRequestHandler(http.server.BaseHTTPRequestHandler):
                             """
         return datos_html
 
-    def results(self, limit=10): #obtenemos los resultados y establecemos límite en 10
+    def resultados(self, limit=10): #obtenemos los resultados y establecemos límite en 10
         connec = http.client.HTTPSConnection(self.NOMBRE_SERVIDOR) 
         connec.request("GET", self.NOMBRE_RECURSO + "?limit=" + str(limit)) 
         print(self.NOMBRE_RECURSO + "?limit=" + str(limit))
         r1 = connec.getresponse()  
         datos_raw = r1.read().decode("utf8") 
         datos = json.loads(datos_raw)  # procesamos el contenido json
-        results = datos['results']
-        return results
+        resultados = datos['results']
+        return resultados
 
     def do_GET(self):
         lista_recursos = self.path.split("?")
@@ -120,7 +120,7 @@ class testHTTPRequestHandler(http.server.BaseHTTPRequestHandler):
             self.send_header('Content-type', 'text/html')
             self.end_headers()
             lista_medics = []
-            results = self.results(limit)
+            resultados = self.resultados(limit)
             for resultado in results:
                 if ('generic_name' in resultado['openfda']):
                     lista_medics.append(resultado['openfda']['generic_name'][0])
@@ -135,8 +135,8 @@ class testHTTPRequestHandler(http.server.BaseHTTPRequestHandler):
             self.send_header('Content-type', 'text/html')
             self.end_headers()
             comps = []
-            results = self.results(limit)
-            for resultado in results:
+            resultados = self.resultados(limit)
+            for resultado in resultados:
                 if ('manufacturer_name' in resultado['openfda']):
                     comps.append(resultado['openfda']['manufacturer_name'][0])
                 else:
@@ -150,8 +150,8 @@ class testHTTPRequestHandler(http.server.BaseHTTPRequestHandler):
             self.send_header('Content-type', 'text/html')
             self.end_headers()
             warnings = []
-            results = self.results(limit)
-            for resultado in results:  # introducimos nuestros resultados en una lista
+            resultados = self.resultados(limit)
+            for resultado in resultados:  # introducimos nuestros resultados en una lista
                 if ('warnings' in resultado):
                     warnings.append(resultado['warnings'][0])
                 else:
