@@ -1,9 +1,9 @@
 import http.server
 import http.client
 import socketserver
-import json 
+import json
 
-PORT = 8000  
+PORT = 8000
 
 class testHTTPRequestHandler(http.server.BaseHTTPRequestHandler):
 
@@ -12,21 +12,19 @@ class testHTTPRequestHandler(http.server.BaseHTTPRequestHandler):
     MEDIC_openfda = '&search=active_ingredient:'
     COMP_openfda = '&search=openfda.manufacturer_name:'
 
-    def pangina_inicio(self):  
+    def pangina_inicio(self):
       # el html contiene la estructura de nuestra pantalla de inicio.
-        html = """   
+        html = """
             <html>
                 <head>
                     <title> OpenFDA</title>
                 </head>
                 <body align=center>
-
                     <h1>Drug product labelling OpenFDA </h1>
                     <form method="get" action="listDrugs">
                         <input type = "submit" value="Drug List">
                         </input>
                     </form>
-
                     <br>
                     <br>
                     <form method="get" action="searchDrug">
@@ -36,14 +34,12 @@ class testHTTPRequestHandler(http.server.BaseHTTPRequestHandler):
                     </form>
                     <br>
                     <br>
-
                     <form method="get" action="listCompanies">
                         <input type = "submit" value="Company List">
                         </input>
                     </form>
                     <br>
                     <br>
-
                     <form method="get" action="searchCompany">
                         <input type = "submit" value="Company Search">
                         <input type = "text" name="company"></input>
@@ -51,7 +47,6 @@ class testHTTPRequestHandler(http.server.BaseHTTPRequestHandler):
                     </form>
                     <br>
                     <br>
-
                     <form method="get" action="listWarnings">
                         <input type = "submit" value="Warnings List">
                         </input>
@@ -65,7 +60,7 @@ class testHTTPRequestHandler(http.server.BaseHTTPRequestHandler):
         datos_html = """
                                 <html>
                                     <head>
-                                        <title>Blanca´s App</title>   
+                                        <title>Blanca´s App</title>
                                     </head>
                                     <body style='background-color: lightgreen'>
                                         <ul>
@@ -81,11 +76,11 @@ class testHTTPRequestHandler(http.server.BaseHTTPRequestHandler):
         return datos_html
 
     def resultados(self, limit=10): #obtenemos los resultados y establecemos límite en 10
-        connec = http.client.HTTPSConnection(self.NOMBRE_SERVIDOR) 
-        connec.request("GET", self.NOMBRE_RECURSO + "?limit=" + str(limit)) 
+        connec = http.client.HTTPSConnection(self.NOMBRE_SERVIDOR)
+        connec.request("GET", self.NOMBRE_RECURSO + "?limit=" + str(limit))
         print(self.NOMBRE_RECURSO + "?limit=" + str(limit))
-        r1 = connec.getresponse()  
-        datos_raw = r1.read().decode("utf8") 
+        r1 = connec.getresponse()
+        datos_raw = r1.read().decode("utf8")
         datos = json.loads(datos_raw)  # procesamos el contenido json
         resultados = datos['results']
         return resultados
@@ -106,10 +101,10 @@ class testHTTPRequestHandler(http.server.BaseHTTPRequestHandler):
                 print("Limit: {}".format(limit))
         else:
             print("NO HAY PARAMETROS")
-            
+
         if self.path == '/':
 
-            self.send_response(200)  # envia respuesta 
+            self.send_response(200)  # envia respuesta
             self.send_header('Content-type', 'text/html')  # envia los headers
             self.end_headers()
             html = self.pagina_inicio()
@@ -187,7 +182,7 @@ class testHTTPRequestHandler(http.server.BaseHTTPRequestHandler):
 
         elif 'searchCompany' in self.path:  # Buscamos la compañía
 
-            self.send_response(200) 
+            self.send_response(200)
             self.send_header('Content-type', 'text/html')
             self.end_headers()
 
@@ -206,7 +201,7 @@ class testHTTPRequestHandler(http.server.BaseHTTPRequestHandler):
                 companies.append(search['openfda']['manufacturer_name'][0])
             resultado_html = self.pagina_2(companies)
             self.wfile.write(bytes(resultado_html, "utf8"))
-            
+
             #Extensiones
 
         elif 'redirect' in self.path:
@@ -220,7 +215,7 @@ class testHTTPRequestHandler(http.server.BaseHTTPRequestHandler):
             self.send_header('WWW-Authenticate', 'Basic realm="Mi servidor"')
             self.end_headers()
 
-        else: 
+        else:
             self.send_error(404)
             self.send_header('Content-type', 'text/plain; charset=utf-8')
             self.end_headers()
@@ -228,9 +223,10 @@ class testHTTPRequestHandler(http.server.BaseHTTPRequestHandler):
         return
 
 
-socketserver.TCPServer.allow_reuse_address = True 
+socketserver.TCPServer.allow_reuse_address = True
 Handler = testHTTPRequestHandler
 httpd = socketserver.TCPServer(("", PORT), Handler)
 print("serving at port", PORT)
 
 httpd.serve_forever()
+
