@@ -12,7 +12,7 @@ class testHTTPRequestHandler(http.server.BaseHTTPRequestHandler):
     MEDIC_openfda = '&search=active_ingredient:'
     COMP_openfda = '&search=openfda.manufacturer_name:'
 
-    def pangina_inicio(self):
+    def pagina_inicio(self):
       # el html contiene la estructura de nuestra pantalla de inicio.
         html = """
             <html>
@@ -75,15 +75,16 @@ class testHTTPRequestHandler(http.server.BaseHTTPRequestHandler):
                             """
         return datos_html
 
-    def resultados(self, limit=10): #obtenemos los resultados y establecemos límite en 10
+    def results(self, limit=10): #obtenemos los resultados y establecemos límite en 10
         connec = http.client.HTTPSConnection(self.NOMBRE_SERVIDOR)
         connec.request("GET", self.NOMBRE_RECURSO + "?limit=" + str(limit))
         print(self.NOMBRE_RECURSO + "?limit=" + str(limit))
         r1 = connec.getresponse()
         datos_raw = r1.read().decode("utf8")
         datos = json.loads(datos_raw)  # procesamos el contenido json
-        resultados = datos['results']
-        return resultados
+        print(datos)
+        results = datos['results']
+        return results
 
     def do_GET(self):
         lista_recursos = self.path.split("?")
@@ -115,7 +116,7 @@ class testHTTPRequestHandler(http.server.BaseHTTPRequestHandler):
             self.send_header('Content-type', 'text/html')
             self.end_headers()
             lista_medics = []
-            resultados = self.resultados(limit)
+            results = self.results(limit)
             for resultado in results:
                 if ('generic_name' in resultado['openfda']):
                     lista_medics.append(resultado['openfda']['generic_name'][0])
@@ -130,8 +131,8 @@ class testHTTPRequestHandler(http.server.BaseHTTPRequestHandler):
             self.send_header('Content-type', 'text/html')
             self.end_headers()
             comps = []
-            resultados = self.resultados(limit)
-            for resultado in resultados:
+            results = self.results(limit)
+            for resultado in results:
                 if ('manufacturer_name' in resultado['openfda']):
                     comps.append(resultado['openfda']['manufacturer_name'][0])
                 else:
@@ -145,8 +146,8 @@ class testHTTPRequestHandler(http.server.BaseHTTPRequestHandler):
             self.send_header('Content-type', 'text/html')
             self.end_headers()
             warnings = []
-            resultados = self.resultados(limit)
-            for resultado in resultados:  # introducimos nuestros resultados en una lista
+            results = self.results(limit)
+            for resultado in results:  # introducimos nuestros resultados en una lista
                 if ('warnings' in resultado):
                     warnings.append(resultado['warnings'][0])
                 else:
