@@ -12,7 +12,7 @@ class testHTTPRequestHandler(http.server.BaseHTTPRequestHandler):
     MEDIC_openfda = '&search=active_ingredient:'
     COMP_openfda = '&search=openfda.manufacturer_name:'
 
-    def pantalla_inicio(self):  
+    def pangina_inicio(self):  
       # el html contiene la estructura de nuestra pantalla de inicio.
         html = """   
             <html>
